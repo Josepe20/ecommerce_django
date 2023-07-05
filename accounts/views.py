@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
+from .models import Profile
 
 
 # Create your views here.
@@ -62,9 +63,27 @@ def login_page(request):
             login(request, user_obj)
             return redirect('/')
 
+        messages.warning(request, "invalid credentials")
+        return HttpResponseRedirect(request.path_info)
 
     return render(request, 'accounts/login.html')
+
 
 def sing_out(request):
     logout(request)
     return redirect('/')
+
+
+def activate_account(request, email_token):
+    try:
+        user = Profile.objects.get(email_token=email_token)
+        user.is_email_verified = True
+        user.save()
+
+        return redirect('/')
+
+    except Exception as e:
+        return HttpResponse('Invalid Email token')
+
+
+
