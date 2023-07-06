@@ -19,12 +19,23 @@ class Category(BaseModel):
 
 
 
+class ColorVariant(BaseModel):
+    color_name = models.CharField(max_length=100)
+
+
+
+class SizeVariant(BaseModel):
+    color_name = models.CharField(max_length=100)
+
+
+
 class Product(BaseModel):
     product_name = models.CharField(max_length=100)
     price = models.IntegerField()
     product_description = models.TextField()
     slug = models.SlugField(unique=True, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+
 
     def save_product(self, *args, **kwargs):
         self.slug = slugify(self.product_name)
