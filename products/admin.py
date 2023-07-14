@@ -11,7 +11,19 @@ class ProductImageAdmin(admin.StackedInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
+    list_display = ['product_name', 'price']
     inlines = [ProductImageAdmin]
+
+
+@admin.register(ColorVariant)
+class ColorVariantAdmin(admin.ModelAdmin):
+    list_display = ['color_name']
+    model = ColorVariant
+
+@admin.register(StorageVariant)
+class StorageVariantAdmin(admin.ModelAdmin):
+    list_display = ['storage_num', 'price_extra']
+    model = StorageVariant
 
 
 admin.site.register(Product, ProductAdmin)

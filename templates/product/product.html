@@ -50,24 +50,31 @@
                             </div> <!-- rating-wrap.// -->
 
                             <div class="mb-3">
-                                <var class="price h4">${{product.price}}.00</var>
-                                <span class="text-muted">/per kg</span>
+                                <var class="price h4" id="product-price">Q
+                                    {% if total_price %}
+                                        {{total_price}}.00
+                                    {% else %}
+                                        {{product.price}}.00
+                                    {% endif %}
+                                    </var>
+<!--                                <span class="text-muted">/per kg</span>-->
                             </div> <!-- price-detail-wrap .// -->
 
                             <p>{{product.product_description}}</p>
 
-
-                            <dl class="row">
-                              <dt class="col-sm-3">Model#</dt>
-                              <dd class="col-sm-9">Odsy-1000</dd>
-
-                              <dt class="col-sm-3">Color</dt>
-                              <dd class="col-sm-9">Brown</dd>
-
-                              <dt class="col-sm-3">Delivery</dt>
-                              <dd class="col-sm-9">Russia, USA, and Europe </dd>
-                            </dl>
-
+                            {% if product.storage_variant.count %}
+                                <div class="form-group">
+                                    <label>Select Storage: {{selected_storage}}</label>
+                                    <div class="mt-1">
+                                        {% for storage in product.storage_variant.all %}
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" onchange="get_correct_price('{{storage.storage_num}}')" name="select_storage" {% if selected_storage == storage.storage_num %} checked="" {% endif %} class="custom-control-input">
+                                                <div class="custom-control-label">{{ storage }}</div>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
                             <hr>
 
                             <div class="form-row">
@@ -85,22 +92,15 @@
                                 </div> <!-- col.// -->
 
                                 <div class="form-group col-md">
-                                    <label>Select size</label>
+                                    <label>Select Color</label>
                                     <div class="mt-1">
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="select_size" checked="" class="custom-control-input">
-                                            <div class="custom-control-label">Small</div>
-                                        </label>
 
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="select_size" class="custom-control-input">
-                                            <div class="custom-control-label">Medium</div>
-                                        </label>
-
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="select_size" class="custom-control-input">
-                                            <div class="custom-control-label">Large</div>
-                                        </label>
+                                        {% for color in product.color_variant.all %}
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="select_color" checked="" class="custom-control-input">
+                                                <div class="custom-control-label">{{ color }}</div>
+                                            </label>
+                                        {% endfor %}
 
                                     </div>
                                 </div> <!-- col.// -->
@@ -117,5 +117,13 @@
 
 
         </div>
-    </section>
-{% endblock %}
+        </section>
+
+
+        <script>
+            function get_correct_price(storage) {
+                window.location.href = window.location.pathname + `?storage=${storage}`;
+            }
+        </script>
+
+    {% endblock %}
