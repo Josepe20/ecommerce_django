@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
-from .models import Profile
+from .models import Profile, Cart
 
 
 # Create your views here.
@@ -84,6 +84,11 @@ def activate_account(request, email_token):
 
     except Exception as e:
         return HttpResponse('Invalid Email token')
+
+
+def cart(request):
+    context = {'cart': Cart.objects.get(is_paid=False, user=request.user)}
+    return render(request, 'accounts/cart.html', context=context)
 
 
 

@@ -60,3 +60,12 @@ class ProductImage(BaseModel):
     image = models.ImageField(upload_to='product')
 
 
+class Coupon(BaseModel):
+    coupon_code = models.CharField(max_length=10)
+    is_expired = models.BooleanField(default=False)
+    discount_price = models.IntegerField(default=500)
+    minimum_amount = models.IntegerField(default=9000)
+
+
+
+

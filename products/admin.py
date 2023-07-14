@@ -4,6 +4,7 @@ from .models import *
 
 
 admin.site.register(Category)
+admin.site.register(Coupon)
 
 
 class ProductImageAdmin(admin.StackedInline):

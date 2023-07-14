@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import uuid
 from base.emails import send_account_activation_email
+from products.models import Coupon
 
 # Create your models here.
 class Profile(BaseModel):
@@ -13,6 +14,28 @@ class Profile(BaseModel):
     email_token = models.CharField(max_length=100, null=True, blank=True)
     profile_image = models.ImageField(upload_to='profile')
 
+    def get_cart_count(self):
+        return CartItems.objects.filter(cart__is_paid=False, cart__user=self.user).count
+
+
+
+class Cart(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
+
+    def get_cart_total(self):
+        cart_items = self.cart_items.all()
+        price = []
+
+        for cart_item in cart_items:
+            price.append(cart_item.product.price)
+
+            if cart_item.storage_variant:
+                storage_variant_price = cart_item.storage_variant.price_extra
+                price.append(storage_variant_price)
+
+        return sum(price)
 
 @receiver(post_save, sender=User)
 def send_email_token(sender, instance, created, **kwargs):
