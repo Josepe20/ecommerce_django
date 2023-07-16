@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from .models import Profile, Cart
+from products.models import Product
 
 
 # Create your views here.
@@ -84,6 +85,16 @@ def activate_account(request, email_token):
 
     except Exception as e:
         return HttpResponse('Invalid Email token')
+
+
+
+def add_to_cart(request, uuid):
+    variant = request.GET.get('variant')
+
+    product = Product.objects.get(uuid=uuid)
+    user = request.user
+
+
 
 
 def cart(request):

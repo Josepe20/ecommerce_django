@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import uuid
 from base.emails import send_account_activation_email
-from products.models import Coupon
+from products.models import Coupon, Product, StorageVariant
 
 # Create your models here.
 class Profile(BaseModel):
@@ -36,6 +36,26 @@ class Cart(BaseModel):
                 price.append(storage_variant_price)
 
         return sum(price)
+
+
+
+
+class CartItems(BaseModel):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    storage_variant = models.ForeignKey(StorageVariant, on_delete=models.SET_NULL, null=True)
+
+    def get_product_price(self):
+        price = [self.product.price]
+
+        if self.storage_variant:
+            storage_variant_price = self.storage_variant.price_extra
+            price.append(storage_variant_price)
+
+        return sum(price)
+
+
+
 
 @receiver(post_save, sender=User)
 def send_email_token(sender, instance, created, **kwargs):
