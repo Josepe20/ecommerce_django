@@ -99,7 +99,7 @@ def add_to_cart(request, uuid):
 
 def cart(request):
     context = {'cart': Cart.objects.get(is_paid=False, user=request.user)}
-    return render(request, 'accounts/cart.html', context=context)
+    return render(request, 'accounts/cart.html')
 
 
 
